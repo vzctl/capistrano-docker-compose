@@ -2,7 +2,7 @@ namespace :simplegit do
 
   desc 'Perform a simple git checkout deploy only and do nothing else'
   task :deploy do
-    invoke 'load:defaults'
+    invoke 'simplegit:load:defaults'
     on roles :all do
       info "--> Deploy from #{fetch(:simplegit_repo)} on branch #{fetch(:simplegit_branch)}"
       unless test "[ -d #{fetch(:simplegit_deploy)}/.git ]"
@@ -16,26 +16,24 @@ namespace :simplegit do
       end
 
       within fetch(:simplegit_deploy) do
-        execute "cd #{fetch(:simplegit_deploy)} && git fetch"
+        execute :git, "fetch"
         if test :git, :'show-branch', fetch(:simplegit_branch)
-          execute "git checkout #{fetch(:simplegit_branch)} ; git reset --hard origin/#{fetch(:simplegit_branch)}"
+          execute :git, "checkout #{fetch(:simplegit_branch)}"
+          execute :git, "reset --hard origin/#{fetch(:simplegit_branch)}"
         else
-          execute "git checkout -b #{fetch(:simplegit_branch)} origin/#{fetch(:simplegit_branch)}"
+          execute :git, "checkout -b #{fetch(:simplegit_branch)} origin/#{fetch(:simplegit_branch)}"
         end
-        execute "git submodule update --init --recursive"
+        execute :git, "submodule update --init --recursive"
       end
     end
   end
 
-end
-
-namespace :load do
-
-  task :defaults do
-    set :simplegit_deploy, ->   { fetch(:deploy_to) }
-    set :simplegit_repo, ->     { fetch(:repo_url) }
-    set :simplegit_branch, ->   { fetch(:branch) }
-
+  namespace :load do
+    task :defaults do
+      set :simplegit_deploy, ->   { fetch(:deploy_to) }
+      set :simplegit_repo, ->     { fetch(:repo_url) }
+      set :simplegit_branch, ->   { fetch(:branch) }
+    end
   end
 
 end
