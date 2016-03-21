@@ -14,6 +14,7 @@ namespace :docker_compose do
     end
   end
 
+  desc "build the services (either all or those specified with :docker_compose_build_services)"
   task :build do
     on roles(fetch(:docker_role)) do
       within deploy_path do
@@ -23,6 +24,7 @@ namespace :docker_compose do
   end
   before :build, "docker_compose:prepare_environment"
 
+  desc "start the services (either all or those specified with :docker_compose_build_services)"
   task :start do
     on roles(fetch(:docker_role)) do
       within deploy_path do
@@ -32,6 +34,7 @@ namespace :docker_compose do
   end
   before :start, "docker_compose:prepare_environment"
 
+  desc "stop the services (either all or those specified with :docker_compose_build_services)"
   task :stop do
     on roles(fetch(:docker_role)) do
       within deploy_path do
@@ -42,11 +45,13 @@ namespace :docker_compose do
   end
   before :stop, "docker_compose:prepare_environment"
 
+  desc "restart the services (either all or those specified with :docker_compose_build_services)"
   task :restart do
     invoke 'docker_compose:stop'
     invoke 'docker_compose:start'
   end
 
+  desc "show the logs of services (either all or those specified with :docker_compose_build_services)"
   task :logs do
     on roles(fetch(:docker_role)) do
       within deploy_path do
@@ -55,6 +60,7 @@ namespace :docker_compose do
     end
   end
 
+  desc "Show the status of running docker services. This is docker-compose ps"
   task :ps do
     on roles(fetch(:docker_role)) do
       within deploy_path do
