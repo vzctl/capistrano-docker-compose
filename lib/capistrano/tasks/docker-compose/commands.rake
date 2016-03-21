@@ -47,6 +47,14 @@ namespace :docker_compose do
     invoke 'docker_compose:start'
   end
 
+  task :logs do
+    on roles(fetch(:docker_role)) do
+      within deploy_path do
+        execute :"docker-compose", compose_logs_command
+      end
+    end
+  end
+
   task :ps do
     on roles(fetch(:docker_role)) do
       within deploy_path do
@@ -84,6 +92,14 @@ namespace :docker_compose do
     cmd.unshift("-p #{fetch(:docker_compose_project_name)}") unless fetch(:docker_compose_project_name).nil?
     cmd << "-f"
     cmd << "-v" if fetch(:docker_compose_remove_volumes) == true
+    cmd << fetch(:docker_compose_build_services) unless fetch(:docker_compose_build_services).nil?
+
+    cmd.join(" ")
+  end
+
+  def compose_logs_command
+    cmd = ["logs"]
+    cmd.unshift("-p #{fetch(:docker_compose_project_name)}") unless fetch(:docker_compose_project_name).nil?
     cmd << fetch(:docker_compose_build_services) unless fetch(:docker_compose_build_services).nil?
 
     cmd.join(" ")
