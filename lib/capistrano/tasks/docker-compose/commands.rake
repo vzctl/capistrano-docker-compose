@@ -1,7 +1,7 @@
 namespace :docker_compose do
   namespace :deploy do
     task :run_steps do
-      invoke "docker_compose:validate"
+      invoke "docker_compose:deploy:validate"
       %w( build start ).each do |task|
         invoke "docker_compose:#{task}"
       end
