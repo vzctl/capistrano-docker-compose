@@ -3,6 +3,7 @@ namespace :docker_compose do
   desc 'Perform a git checkout deploy, then build & (re)start through docker-compose'
   task :deploy do
     invoke 'simplegit:deploy'
+    invoke 'load:defaults'
     invoke 'docker_compose:prepare_environment'
     invoke 'docker_compose:deploy:run_steps'
   end
